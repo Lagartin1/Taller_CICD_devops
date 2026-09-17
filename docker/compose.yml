@@ -1,0 +1,17 @@
+
+
+
+services:
+  backend:
+    build: ./baceknd
+    container_name: backend
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+  
+  fontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8080:8080"
