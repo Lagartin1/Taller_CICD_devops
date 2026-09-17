@@ -1,0 +1,29 @@
+name: Deploy pipeline
+
+on:
+  workflow_run:
+    workflows : ["Docker Image CI"]
+    types: completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare backend environment
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+        run: |
+          printf 'DATABASE_URL=%s\nJWT_SECRET=%s\nNODE_ENV=production\nFRONTEND_URL=%s\nPORT=3000\n' \
+            "$DATABASE_URL" "$JWT_SECRET" "$FRONTEND_URL" > baceknd/.env
+
+      - name: Pull latest images
+        run: docker compose -f docker/compose.yml pull
+
+      - name: Start application
+        run: docker compose -f docker/compose.yml up -d --remove-orphans
