@@ -1,17 +1,25 @@
-
-
-
 services:
   backend:
-    build: ./baceknd
+    build:
+      context: ../baceknd
+      dockerfile: dockerfile
     container_name: backend
+    image: lagartin1/devops-ci-cd-taller:api-latest
     ports:
       - "3000:3000"
+    env_file:
+      - ../baceknd/.env
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      PORT: 3000
   
-  fontend:
-    build: ./frontend
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
+    image: lagartin1/devops-ci-cd-taller:frontend-latest
     container_name: frontend
     ports:
-      - "8080:8080"
+      - "5173:80"
