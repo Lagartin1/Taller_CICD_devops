@@ -19,3 +19,7 @@ npm run dev
 La API quedará disponible en `http://localhost:3000`. El endpoint `GET /api/health` permite comprobar que está activa.
 
 Para el frontend, copia `frontend/.env.example` a `frontend/.env` y configura `VITE_API_URL` con la URL base de la API.
+
+
+
+workflows para ci cd con docker - aws
