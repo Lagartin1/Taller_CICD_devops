@@ -12,7 +12,8 @@ const app: express.Application = express() ;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: config.frontendUrl, credentials: true }));
+// Reflect the requesting origin so cookie-based auth works from any frontend.
+app.use(cors({ origin: true, credentials: true }));
 
 
 app.use('/api', router);
@@ -28,7 +29,6 @@ app.get('/', (req, res) => {
 });
 
 export default app;
-
 
 
 
