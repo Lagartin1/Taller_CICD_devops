@@ -1,0 +1,34 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Login Docker
+      env:
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD:  ${{secrets.DOCKER_PSWD}}
+      run: echo "$DOCKER_PASSWORD" | docker login \
+          --username "$DOCKER_USERNAME" \
+          --password-stdin
+    - name: Prepare Compose
+      run: touch baceknd/.env 
+      
+    - name: Build Images
+      env:
+        VITE_API_URL: ${{ vars.VITE_API_URL }}
+      run: docker compose -f docker/compose.yml build
+    - name: Push Images
+      run: docker compose -f docker/compose.yml push
